@@ -1,0 +1,40 @@
+docker run -it --entrypoint=bash python:3.9.2
+
+-it -> iteractive mode
+--entrypoint -> set where the docker image will start 
+
+
+docker ps -> list dockers running
+
+-------------------------------------------------------------------------------------
+
+1.  docker build -t test:pandas . 
+2.  docker run -it test:pandas 2022-01-01 (possible argument to python script)
+
+-------------------------------------------------------------------------------------
+
+1. Create Postgres Image
+
+docker run -it -e PGDATA=/var/lib/postgresql/data -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v "C:\Users\Olist\OneDrive\Ambiente de Trabalho\Projects\NY Cabs data\docker_sql\ny_taxi_postgres_data:/var/lib/postgresql/data" -p 5432:5432 postgres:13
+
+2. connect to it using pgcli in python
+
+pgcli -h localhost -p 5432 -u root -d ny_taxi 
+
+
+------------------------------------------------------------------------------------
+
+- Run PgAdmin on docker: To connect the Postgres container with PgAdmin Container, is necessary to create a docker network 
+
+1. Create Postgres image with network
+
+    docker run -it -e PGDATA=/var/lib/postgresql/data -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi"  -v "C:\Users\Olist\OneDrive\Ambiente de Trabalho\Projects\NY Cabs data\docker_sql\ny_taxi_postgres_data:/var/lib/postgresql/data" -p 5432:5432 --network=pg-network --name pg-database postgres:13
+
+2. Create PgAdmin container with network
+
+    docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -p 8080:80 --network=pg-network --name pgadmin-2 dpage/pgadmin4
+
+
+
+
+"C:\Users\Olist\OneDrive\Ambiente de Trabalho\Projects\NY Cabs data\docker_sql\Files:/app/Files"
