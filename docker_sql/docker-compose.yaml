@@ -6,7 +6,7 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=ny_taxi
     volumes:
-      - "C:\\Users\\Olist\\OneDrive\\Ambiente de Trabalho\\Projects\\NY Cabs data\\docker_sql\\ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
+      - "C:\\Users\\Olist\\OneDrive\\Ambiente de Trabalho\\Projects\\ny_cab_app\\docker_sql\\ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
     ports:
       - "5432:5432"
   pgadmin:

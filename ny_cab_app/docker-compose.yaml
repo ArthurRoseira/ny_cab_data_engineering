@@ -9,7 +9,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - C:\Users\Olist\OneDrive\Ambiente de Trabalho\Projects\NY Cabs data\dokcer_nosql\mongodb_data:/data/db:rw
+      - C:\Users\Olist\OneDrive\Ambiente de Trabalho\Projects\ny_cab_app\ny_cab_app\mongodb_data:/data/db:rw
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
