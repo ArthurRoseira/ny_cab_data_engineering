@@ -14,7 +14,7 @@ def index():
     try:
         client = MongoClient(URI,serverSelectionTimeoutMS=100)
         print(client.server_info())
-        db_list = client.list_databases()
+        result = client.ny_cab_data.taxi_zones.find({})
         collection = client.ny_cab_data.ny_cab_trips
     except errors.ServerSelectionTimeoutError as err:
         print(err)
@@ -24,7 +24,7 @@ def index():
         collection.insert_one({'content': content, 'degree': degree})
         client.close()
         return redirect(url_for('index'))
-    return(render_template('index.html'))
+    return(render_template('index.html',taxi_zones = result))
 
 
 
