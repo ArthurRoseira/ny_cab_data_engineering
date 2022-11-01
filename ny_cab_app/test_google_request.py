@@ -49,15 +49,18 @@ class DataCrawler:
 
     def get_coordinates(self, url_list:list)->dict:
         try:
-            url = next(item for item in url_list if any(s in item["link"] for s in ['latitude.to','wikipedia','latlon']))
+            url = next(item for item in url_list if any(s in item["link"] for s in ['latitude.to','latlong','distancesto']))
             if 'latitude.to' in url['link']:
                 coor = self.get_coordinates_latitudeto(url['link'])
             elif 'wikipedia' in url['link']:
                 coor= self.get_coordinates_wikipedia(url['link'])
-            else:
+            elif 'latlon' in url['link']:
                 coor = self.get_coordinates_latlon(url['link'])
+            else:
+                coor = self.get_coordinates_distancesto(url['link'])
             return coor
-        except:
+        except Exception as e:
+            print(e)
             return {} 
 
     def get_coordinates_latlon(self,url)->dict:
@@ -68,22 +71,19 @@ class DataCrawler:
 
 
     def get_coordinates_wikipedia(self,url)->dict:
-        latlon_masks = ['[0-9]{2}\.[0-9]{6}']
         coordinates = {}
         thepage = requests.get(url)
         soup = BeautifulSoup(thepage.text, "html.parser")
-        coordinates_strings  = re.findall('[0-9]{2}\.[0-9]{3}\°[A-Z]\s[0-9]{2}\.[0-9]{3}\°[A-Z]',soup.text)[0]
-        coordinates_strings = coordinates_strings.split(" ")
-        poles =  [cor[-1] for cor in coordinates_strings]
-        for i,c in enumerate(coordinates_strings):
-            if i == 0 and poles[i] == 'S':
-                coordinates['latitude'] = float(c.split('°')[0]) * -1
-            elif i == 0 and poles[i] == 'N':
-                coordinates['latitude'] = float(c.split('°')[0])
-            elif i == 1 and poles[i] == 'W':
-                coordinates['longitude'] = float(c.split('°')[0]) * -1
-            else:
-                coordinates['longitude'] = float(c.split('°')[0])  
+        table = soup.find('table', attrs={'class':'margina'})
+        table_rows = table.find_all('tr')
+        coordinates = {}
+        for tr in table_rows:
+            td = tr.find_all('td')
+            row = [tr.text.strip() for tr in td if tr.text.strip()]
+            if 'Latitude' in tr.text:
+                coordinates['latitude'] = float(row[0])
+            if 'Longitude' in tr.text:
+                coordinates['longitude'] = float(row[0])
         return coordinates
 
 
@@ -96,6 +96,22 @@ class DataCrawler:
         coordinates['latitude'] = float(value.split(' ')[0])
         coordinates['longitude'] = float(value.split(' ')[1])
         return coordinates
+
+    def get_coordinates_distancesto(self,url):
+        thepage = requests.get(url)
+        soup = BeautifulSoup(thepage.text, "html.parser")
+        table = soup.find('table', attrs={'class':'table table-bordered table-striped table-hover'})
+        table_rows = table.find_all('tr')
+        coordinates = {}
+        for tr in table_rows:
+            td = tr.find_all('td')
+            row = [tr.text.strip() for tr in td if tr.text.strip()]
+            if 'Latitude:' in tr.text:
+                coordinates['latitude'] = float(row[0])
+            if 'Longitude:' in tr.text:
+                coordinates['longitude'] = float(row[0])
+        return coordinates
+
 
 
 

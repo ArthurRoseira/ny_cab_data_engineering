@@ -11,10 +11,13 @@
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
     integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
     crossorigin=""></script>
+    <script type="text/javascript">
+      var taxi_zones_list = '{{taxi_zones|tojson }}'
+    </script>
   </head>
   <body>
     <div class="testbox">
-      <form action="/">
+      <form  method="post"> 
         <div class="banner">
           <h1>NY CAB Trips</h1>
         </div>
@@ -22,25 +25,28 @@
         <div class="item">
           <p>Name<span class="required">*</span></p>
           <div class="name-item">
-            <input type="text" name="name" placeholder="First" required/>
-            <input type="text" name="name" placeholder="Last" required/>
+            <input type="text" name="first_name" placeholder="First" required/>
+            <input type="text" name="last_name" placeholder="Last" required/>
           </div>
         </div>
         <div class="question">
           <p>Gender<span class="required">*</span></p>
           <div class="question-answer">
-            <label><input type="radio" value="none" name="gender" required/> <span>Male</span></label>
-            <label><input type="radio" value="none" name="gender" required/> <span>Female</span></label>
+            <label><input type="radio" value="male" name="gender" required/> <span>Male</span></label>
+            <label><input type="radio" value="female" name="gender" required/> <span>Female</span></label>
           </div>
         </div>
         <div class="item">
-          <p>Home Address<span class="required">*</span></p>
-          <input type="text" name="name" placeholder="Street address" required/>
+          <p>Select your Taxi trip<span class="required">*</span></p>
+          <input type="text" name="address" placeholder="Street address" required/>
+          <p>Select Zones: (From/To)<span class="required">*</span></p>
           <div class="city-item">
-            <input type="text" name="name" placeholder="City" required/>
-            <input type="text" name="name" placeholder="Region" required/>
-            <input type="text" name="name" placeholder="Postal / Zip code" required/>
-            <select>
+            <select id="from_zone"  name="from_zone">
+              {% for item in taxi_zones%}
+              <option>{{item.Zone}}</option>
+              {% endfor %}
+            </select>
+            <select id="to_zone" name="to_zone">
               {% for item in taxi_zones %}
               <option>{{item.Zone}}</option>
               {% endfor %}
@@ -49,16 +55,15 @@
         </div>
         <div class="item">
           <p>Email<span class="required">*</span></p>
-          <input type="text" name="name" required/>
+          <input type="text" name="email" required/>
         </div>
         <div class="item">
         <div id="map" class="item first""></div>
-        <script src="{{ url_for('static', filename='map.js') }}">
-        </script>
         </div>
         <div class="btn-block">
-          <button type="submit" href="/">Apply</button>
+          <button type="submit">Apply</button>
         </div>
+        <script src="{{ url_for('static', filename='map.js') }}"></script>
       </form>
     </div>
   </body>
