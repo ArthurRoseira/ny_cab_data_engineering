@@ -2,7 +2,7 @@ import json
 from pymongo import MongoClient,errors
 from flask import Flask, render_template, request, url_for, redirect
 import os
-
+import datetime
 # mongodb://[username:password@]host1[:port1]
 
 app = Flask(__name__)
@@ -27,7 +27,8 @@ def index():
            'address':request.form['address'],
            'from_zone':request.form['from_zone'],
            'to_zone':request.form['to_zone'],
-           'email':request.form['email']
+           'email':request.form['email'],
+           'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         })
         client.close()
         return redirect(url_for('index'))
