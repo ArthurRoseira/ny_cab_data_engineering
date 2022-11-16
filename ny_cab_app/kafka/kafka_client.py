@@ -1,6 +1,6 @@
 
 import json
-from pykafka import KafkaClient
+from pykafka import KafkaClient, KafkaConsumer
 
 
 
@@ -20,7 +20,15 @@ class ClientManager:
         self.producer = topic.get_sync_producer()
     
     def get_consumer(self):
-        self.consumer = self.client.topics[self.topic_name].get_simple_consumer()
+        consumer = KafkaConsumer('my-topic',
+                         group_id='my-group',
+                         bootstrap_servers=['localhost:9092'])
+        for message in consumer:
+            # message value and key are raw bytes -- decode if necessary!
+            # e.g., for unicode: `message.value.decode('utf-8')`
+            print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition,
+                                                message.offset, message.key,
+                                                message.value))
 
     def send_data(self,message:str):
         str_message = json.dumps(message)

@@ -29,9 +29,9 @@ class PostgresIngestion:
         start_year = int(self.start_year)
         end_year = int(self.end_year)
         if start_year == end_year: 
-            ym_list = zip([start_year],range(6,12,1))
+            ym_list = zip([start_year],range(1,12,1))
         else:
-            ym_list = zip(range(start_year,end_year,1),range(6,12,1))
+            ym_list = zip(range(start_year,end_year,1),range(1,12,1))
         log = {}
         print(ym_list)
         for ym in ym_list:
