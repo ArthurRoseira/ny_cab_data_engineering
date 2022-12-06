@@ -2,7 +2,6 @@ import json
 import asyncio
 from pymongo import MongoClient,errors
 from flask import Flask, render_template, request, url_for, redirect
-import requests as rt
 import os
 import datetime
 # mongodb://[username:password@]host1[:port1]
@@ -14,7 +13,14 @@ topic_name = 'ny_cab_data'
 kafka_client = ClientManager(topic=topic_name)
 kafka_client.get_producer()
 
-port = 0
+def trip_cost_request(form_data:dict)->list:
+    data = []
+    kafka_client.send_data(json.dumps(form_data))
+    for i in kafka_client.get_consumer():
+        data.append('data:{0}\n\n'.format(i.value.decode()))
+    return data
+
+
 
 app = Flask(__name__)
 
@@ -32,11 +38,21 @@ async def index():
     if request.method=='POST':
         request.form['first_name']
         trip_cost = asyncio.create_task(
-            data = rt.post(url=f"http://0.0.0.0/{port}/fare_amount",data={'test':'message'})
+            trip_cost_request({'test':'message'})
         )
         cost = await trip_cost
         print(cost)
-        kafka_client.send_data(json.dumps(request.form))
+        # collection.insert_one({
+        #    'first_name':request.form['first_name'],
+        #    'last_name':request.form['last_name'],
+        #    'gender':request.form['gender'],
+        #    'address':request.form['address'],
+        #    'from_zone':request.form['from_zone'],
+        #    'to_zone':request.form['to_zone'],
+        #    'email':request.form['email'],
+        #    'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # })
+        # client.close()
         return redirect(url_for('index'))
     return(render_template('index.html',taxi_zones = list(result)))
 
